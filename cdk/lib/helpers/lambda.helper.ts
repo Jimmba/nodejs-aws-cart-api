@@ -1,5 +1,5 @@
 import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
-import { CdkStack } from "lib/cdk-stack";
+import { CdkStack } from "../cdk-stack";
 
 export const getNestJSLambdaRole = (stack: CdkStack): Role => {
   const cloudWatchPolicy = ManagedPolicy.fromAwsManagedPolicyName('CloudWatchFullAccess');

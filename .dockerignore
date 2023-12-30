@@ -1,1 +1,20 @@
-node_modules
+# are created by docker image
+.elasticbeanstalk/
+node_modules/
+
+# are used for development only
+dist/
+cdk/
+cdk.out/
+test/
+.eslitrc.js
+.gitignore
+.prettierc
+cdk.json
+jest.config.json
+package-lock.json
+queries.sql
+README.md
+
+# is used in lambda
+src/main-lambda.ts

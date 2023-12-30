@@ -1,4 +1,9 @@
-import { Cors, IntegrationOptions, LambdaRestApi, MethodOptions } from 'aws-cdk-lib/aws-apigateway';
+import {
+  Cors,
+  IntegrationOptions,
+  LambdaRestApi,
+  MethodOptions
+} from 'aws-cdk-lib/aws-apigateway';
 
 export const getGatewayMethodOptions = (gateway: LambdaRestApi): MethodOptions => {
   const gatewayResponseBodyModel = gateway.addModel('model', {
