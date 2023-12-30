@@ -1,16 +1,24 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CartItemEntity } from "../entities";
+import { CartItemEntity, ProductEntity } from "../entities";
 import { Repository } from "typeorm";
+import { ProductService } from "./product.service";
+import { CartItem } from "../models";
 
 @Injectable()
 export class CartItemService {
   constructor(
     @InjectRepository(CartItemEntity)
     private cartItemRepository: Repository<CartItemEntity>,
+    private productService: ProductService,
   ){}
 
-  async createCartItem(cartId: string, productId: string, count: number): Promise<CartItemEntity> {
+  async createCartItem(cartId: string, cartItem: CartItem): Promise<CartItemEntity> {
+    const { product, count } = cartItem;
+    const { id: productId } = product;
+
+    await this.productService.findOrCreateProduct(product);
+
     const item = new CartItemEntity();
     item.cartId = cartId;
     item.productId = productId;
@@ -29,18 +37,26 @@ export class CartItemService {
       });
   }
 
-  async updateCartItem(cartId: string, productId: string, count: number): Promise<CartItemEntity> {
+  async updateCartItem(cartId: string, cartItem: CartItem): Promise<void> {
+    const { product, count } = cartItem;
+    const { id: productId } = product;
+
     const item = await this.findCartItem(cartId, productId);
 
     if (item) {
+      if (count === 0) {
+        await this.cartItemRepository.delete(item.id);
+        return;
+      }
+
       item.count = count,
       await this.cartItemRepository.save(item);
     } else {
-      return this.createCartItem(cartId, productId, count);
+      await this.createCartItem(cartId, cartItem);
     }
   }
 
-  async removeCartItem(cartId: string): Promise<void> {
+  async removeCartItemsByCartId(cartId: string): Promise<void> {
     await this.cartItemRepository.delete({cartId});
   }
 }

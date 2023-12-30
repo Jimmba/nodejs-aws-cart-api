@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { CartEntity } from './cart.entity';
+import { ProductEntity } from './product.entity';
 
 
 @Entity()
@@ -20,9 +21,9 @@ export class CartItemEntity {
   @Column()
   count: number;
 
-  // @ManyToOne(type => ProductEntity, (product) => product.products, {
-  //   eager: true,
-  //   cascade: true
-  // })
-  // product: ProductEntity;
+  @ManyToOne(type => ProductEntity, (product) => product.products, {
+    eager: true,
+    cascade: true
+  })
+  product: ProductEntity;
 }

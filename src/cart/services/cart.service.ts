@@ -10,12 +10,9 @@ import { CartItemService } from './cart-item.service';
 
 @Injectable()
 export class CartService {
-  private userCarts: Record<string, Cart> = {};
-
   constructor(
     @InjectRepository(CartEntity)
     private cartRepository: Repository<CartEntity>,
-    // private productService: ProductService,
     private cartItemService: CartItemService,
   ){}
 
@@ -27,7 +24,8 @@ export class CartService {
       }
     });
 
-    if (carts) return this.getProducts(carts);
+    // if (carts) return this.getProducts(carts);
+    return carts;
   }
 
   async createByUserId(userId: string) {
@@ -58,17 +56,15 @@ export class CartService {
   }
 
   async updateByUserId(userId: string, cartItem: CartItem): Promise<Cart> {
-    const { id: cartId, ...rest } = await this.findOrCreateByUserId(userId);
-    const { product, count } = cartItem;
-    const { id: productId } = product;
+    const { id: cartId } = await this.findOrCreateByUserId(userId);
 
-    await this.cartItemService.updateCartItem(cartId, productId, count);
+    await this.cartItemService.updateCartItem(cartId, cartItem);
     return this.findByUserId(userId);
   }
 
   async removeByUserId(userId): Promise<void> {
     const { id: cartId } = await this.findOrCreateByUserId(userId);
-    await this.cartItemService.removeCartItem(cartId);
+    await this.cartItemService.removeCartItemsByCartId(cartId);
     await this.cartRepository.delete({userId});
   }
 
